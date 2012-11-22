@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Virtual Soccer Tracker</string>
+    <string name="serverTimeLabel">Server time:</string>
+    <string name="playedMatchLabel">Played Matches:</string>
+    <string name="vsl_banner">Virtual Soccer League Banner</string>
+</resources>
