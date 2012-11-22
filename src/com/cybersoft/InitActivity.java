@@ -15,7 +15,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class InitActivity extends Activity {
 
@@ -38,19 +40,33 @@ public class InitActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-        config = new Config("test", "test");
+        config = new Config("Andrey", "F76235f");
         loadVCData(config);
         fillView();
     }
 
     private void fillView() {
+        fillServerTimeLayer();
+        fillPlayedMatchesLayer();
+    }
+
+    private void fillServerTimeLayer() {
+        TextView timeView = (TextView) findViewById(R.id.datetime);
+        DateTime dateTime = dataModel.getServerDateTime();
+        SimpleDateFormat moscowTime = new SimpleDateFormat("HH:mm");
+        moscowTime.setTimeZone(TimeZone.getTimeZone("Europe/Moscow"));
+        timeView.setText(moscowTime.format(dateTime.getDate()));
+    }
+
+    private void fillPlayedMatchesLayer() {
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.played_matches);
         for (PlayedMatch playedMatch : dataModel.getPlayedMatchList()) {
-            TextView playedMatches = new TextView(this);
-            playedMatches.setText(playedMatch.toString());
-            playedMatches.setId(playedMatch.hashCode());
-            playedMatches.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            linearLayout.addView(playedMatches);
+            TextView playedMatchTV = new TextView(this);
+            playedMatchTV.setText(playedMatch.toString());
+            playedMatchTV.setId(playedMatch.hashCode());
+            playedMatchTV.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            linearLayout.addView(playedMatchTV);
+            System.out.println("added textview: " + playedMatch.hashCode());
         }
     }
 
@@ -81,7 +97,9 @@ public class InitActivity extends Activity {
 
             for (Element href : playedMatcheHRefs) {
                 Element playedMatch = href.parent();
-                dataModel.addFinishedMatch(new PlayedMatch(playedMatch.text()));
+                String matchDescription = playedMatch.text();
+                System.out.println("added played match:" + matchDescription);
+                dataModel.addFinishedMatch(new PlayedMatch(matchDescription));
             }
 
             return true;
